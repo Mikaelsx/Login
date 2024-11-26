@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple - login form</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <meta name="theme-color" content="white"> <!-- Barra de pesquisa vermelha -->
+    <link rel="icon" href="Log.png" type="image/jpg"> <!-- Miniatura no Google (favicon) -->
+</head>
+
+<body>
+    <div id="app">
+        <canvas id="webgl-canvas"></canvas>
+        <div class="card">
+            <div class="card-header">
+                <h2>Login</h2>
+            </div>
+            <form class="card-form" id="login-form">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-icon">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+        <div id="toast" class="toast hidden">
+            <i class="fas fa-check-circle"></i>
+            <span class="toast-message">Login successful!</span>
+        </div>
+        <div id="toast-error" class="toast hidden">
+            <i class="fas fa-times-circle"></i>
+            <span class="toast-message">Invalid email or password!</span>
+        </div>
+        <div id="toast-email-error" class="toast hidden">
+            <i class="fas fa-times-circle"></i>
+            <span class="toast-message">Please enter a valid email!</span>
+        </div>
+        <div id="toast-password-error" class="toast hidden">
+            <i class="fas fa-times-circle"></i>
+            <span class="toast-message">Password must be at least 6 characters!</span>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="modal-confirmation" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Login Successful!</h2>
+            <p>You have been successfully authenticated. Welcome!</p>
+            <button id="close-modal" class="btn" onclick="window.location.reload();">Fechar</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import Spheres2Background from 'https://cdn.jsdelivr.net/npm/threejs-components@0.0.8/build/backgrounds/spheres2.cdn.min.js';
+
+        // Inicializando o fundo animado com esferas cinzas
+        const bg = Spheres2Background(document.getElementById('webgl-canvas'), {
+            count: 200,
+            colors: [0xaaaaaa, 0xcccccc, 0xdddddd],
+            minSize: 0.5,
+            maxSize: 1,
+        });
+
+        // Toasts
+        const form = document.getElementById('login-form');
+        const toast = document.getElementById('toast');
+        const toastError = document.getElementById('toast-error');
+        const toastEmailError = document.getElementById('toast-email-error');
+        const toastPasswordError = document.getElementById('toast-password-error');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        // Modal de confirmação
+        const modal = document.getElementById('modal-confirmation');
+        const closeModalBtn = document.getElementById('close-modal');
+        const closeModalSpan = document.querySelector('.close-btn');
+
+        // Função para mostrar o modal
+        function showModal() {
+            modal.style.visibility = 'visible';
+            modal.style.opacity = '1';
+        }
+
+        // Função para esconder o modal
+        function hideModal() {
+            modal.style.visibility = 'hidden';
+            modal.style.opacity = '0';
+        }
+
+        // Fechar o modal quando o botão de fechar for clicado
+        closeModalBtn.addEventListener('click', hideModal);
+        closeModalSpan.addEventListener('click', hideModal);
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // Validação do e-mail
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if (!emailRegex.test(email)) {
+                toastEmailError.classList.remove('hidden');
+                setTimeout(() => {
+                    toastEmailError.classList.add('hidden');
+                }, 3000); // Oculta o toast de erro após 3 segundos
+                return;
+            }
+
+            // Validação da senha
+            if (password.length < 6) {
+                toastPasswordError.classList.remove('hidden');
+                setTimeout(() => {
+                    toastPasswordError.classList.add('hidden');
+                }, 3000); // Oculta o toast de erro após 3 segundos
+                return;
+            }
+
+            // Exibe o toast de sucesso
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000); // Oculta o toast após 3 segundos
+
+            // Aguarda 4 segundos e exibe o modal de confirmação
+            setTimeout(showModal, 4000);
+        });
+    </script>
+</body>
+
+</html>
